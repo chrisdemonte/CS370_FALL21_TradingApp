@@ -2,6 +2,7 @@ package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import java.util.regex.Pattern;
 
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.UserUtils;
+import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.NewAccountActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         Button createNewButton = findViewById(R.id.newAccountButton);
         /**
          * Code for the LOGIN BUTTON
+         * onClick() Tests if the username and password are valid strings according to specs in the UserUtil class
+         * To Do: database check, and logging into homepage
          */
         loginButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -52,11 +56,22 @@ public class MainActivity extends AppCompatActivity {
         });
         /**
          * Code for the CREATE NEW ACCOUNT BUTTON
+         * onClick() Loads the New Account Activity
          */
         createNewButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                loadNewAccountActivity();
             }
         });
+    }
+
+    /**
+     * Method for loading the NEW ACCOUNT ACTIVITY
+     * To Do: left commented code for message passing
+     */
+    private void loadNewAccountActivity(){
+        Intent intent = new Intent(this, NewAccountActivity.class);
+        //   intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 }
