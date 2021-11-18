@@ -19,12 +19,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final EditText usernameEntry = (EditText) findViewById(R.id.usernameEntry);
-        final EditText passwordEntry = (EditText) findViewById(R.id.passwordEntry);
-        final TextView errorTextView = (TextView) findViewById(R.id.errorMessageTextView);
-
-        Button button = (Button) findViewById(R.id.loginButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        /**
+         * Create references to the GUI objects in the Main Activity
+         */
+        final EditText usernameEntry = findViewById(R.id.usernameEntry);
+        final EditText passwordEntry = findViewById(R.id.passwordEntry);
+        final TextView errorTextView = findViewById(R.id.errorMessageTextView);
+        Button loginButton = findViewById(R.id.loginButton);
+        Button createNewButton = findViewById(R.id.newAccountButton);
+        /**
+         * Code for the LOGIN BUTTON
+         */
+        loginButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String username = usernameEntry.getText().toString();
                 int result = UserUtils.validateUsername(username);
@@ -41,6 +47,15 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 errorTextView.setVisibility(View.INVISIBLE);
+                errorTextView.setText("Unknown Error!");
+            }
+        });
+        /**
+         * Code for the CREATE NEW ACCOUNT BUTTON
+         */
+        createNewButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
             }
         });
     }
