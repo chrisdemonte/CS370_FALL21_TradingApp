@@ -10,6 +10,7 @@
         android:id="@+id/bgImage"
         android:layout_width="1356dp"
         android:layout_height="981dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -17,17 +18,19 @@
 
     <ImageView
         android:id="@+id/greenBox"
-        android:layout_width="307dp"
+        android:layout_width="0dp"
         android:layout_height="456dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498"
         app:srcCompat="@color/colorPrimaryDark" />
 
     <ImageView
         android:id="@+id/whiteBox"
-        android:layout_width="284dp"
+        android:layout_width="0dp"
         android:layout_height="427dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,11 +71,12 @@
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:ems="10"
+        android:hint="Username"
         android:inputType="textPersonName"
-        android:text="Username"
         android:textAllCaps="false"
         android:textColor="@color/colorPrimaryDark"
         android:textColorHighlight="#8DBBB8"
+        android:textColorHint="@color/colorPrimaryDark"
         android:textColorLink="#009688"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -109,5 +113,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.893" />
+
+    <TextView
+        android:id="@+id/errorMessageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="19dp"
+        android:text="Error!"
+        android:textColor="#E91E63"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordEntry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

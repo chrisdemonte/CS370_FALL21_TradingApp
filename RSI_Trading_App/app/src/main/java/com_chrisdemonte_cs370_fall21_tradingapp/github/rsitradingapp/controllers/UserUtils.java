@@ -43,14 +43,56 @@ public class UserUtils {
         if (!pattern.matcher(password).find()){
             return -6;
         }
-        pattern = Pattern.compile("^(?=.*[@#$%^&+=])"); //regex pattern for special characters
+        pattern = Pattern.compile("^(?=.*[@#$%^*!&+=])"); //regex pattern for special characters
         if (!pattern.matcher(password).find()){
             return -7;
         }
         pattern = Pattern.compile("^(?=\\S+$)"); //regex pattern for whitespace
-        if (pattern.matcher(password).find()){
+        if (!pattern.matcher(password).find()){
             return -8;
         }
         return 1;                       //password passes, so return 1
+    }
+    public static String getUsernameErrorMsg(int errorNumber){
+        if (errorNumber == -1){    //if the username is empty string
+            return "No username was entered!";
+        }
+        if (errorNumber == -2){     //if the username is under 5 chars
+            return "Username cannot be under 5 characters";
+        }
+        if (errorNumber == -3){    //if the username is over 16 chars
+            return  "Username cannot be over 16 characters!";
+        }
+        if (errorNumber == -4){     //if the username contains special chars
+            return "Username cannot contain special characters!";
+        }
+        return "Unknown Username Error!";
+    }
+    public static String getPasswordErrorMsg(int errorNumber){
+        if (errorNumber == -1){
+            return "No password was entered!";
+        }
+        if (errorNumber == -2){
+            return "Password cannot be under 5 characters";
+        }
+        if (errorNumber == -3){
+            return  "Password cannot be over 16 characters!";
+        }
+        if (errorNumber == -4){
+            return "Password must contain at least 1 number!";
+        }
+        if (errorNumber == -5){
+            return "Password must contain at least 1 lowercase letter!";
+        }
+        if (errorNumber == -6){
+            return "Password must contain at least 1 uppercase letter!";
+        }
+        if (errorNumber == -7){
+            return "Password must contain at least 1 special character!";
+        }
+        if (errorNumber == -8){
+            return "Password cannot contain any white space!";
+        }
+        return "Unknown Password Error!";
     }
 }
