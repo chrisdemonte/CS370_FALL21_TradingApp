@@ -13,9 +13,11 @@ import java.util.regex.Pattern;
 
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.UserUtils;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.NewAccountActivity;
+import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.User;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static User USER;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
