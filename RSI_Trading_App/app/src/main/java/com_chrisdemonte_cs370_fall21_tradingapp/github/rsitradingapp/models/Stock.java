@@ -3,7 +3,7 @@ package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models;
 public class Stock {
     private String ticker;
     private String company;
-    private int currentPrice;
+    private double currentPrice;
     private double[] historicPrices;
     private int numPrices;
     private double rsi;
@@ -24,9 +24,18 @@ public class Stock {
         this.rsi = 100.0 - (100.0/ (1.0 + ((this.averageGain / (double)numPrices)/(this.averageLoss/(double)numPrices))));
     }
     public void calculateRSI2(){
+        double change = this.currentPrice - historicPrices[this.numPrices - 1];
+        double gain = 0;
+        double loss = 0;
+        if (change > 0){
+            gain += change;
+        }
+        else {
+            loss -= change;
+        }
         this.rsi2 = 100.0 - (100.0/
-                (1.0 + ((((this.averageGain * (double)(this.numPrices - 2))) / (double)numPrices)/
-                        (this.averageLoss/(double)numPrices))));
+                (1.0 + ((((this.averageGain * (double)(this.numPrices - 2)) + gain) / (double)numPrices)/
+                        (((this.averageLoss * (double)(this.numPrices - 2)) + loss) / (double)numPrices))));
     }
     public void calculateGainLoss(){
         double change;
@@ -62,11 +71,11 @@ public class Stock {
         this.company = company;
     }
 
-    public int getCurrentPrice() {
+    public double getCurrentPrice() {
         return currentPrice;
     }
 
-    public void setCurrentPrice(int currentPrice) {
+    public void setCurrentPrice(double currentPrice) {
         this.currentPrice = currentPrice;
     }
 
