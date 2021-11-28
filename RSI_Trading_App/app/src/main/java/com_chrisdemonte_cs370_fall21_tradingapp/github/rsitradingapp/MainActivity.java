@@ -2,6 +2,7 @@ package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.UserUtils;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 errorTextView.setText("Unknown Error!");
             }
         });
-        /**
+        /*
          * Code for the CREATE NEW ACCOUNT BUTTON
          * onClick() Loads the New Account Activity
          */
@@ -67,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Method for loading the NEW ACCOUNT ACTIVITY
+
+     /* Method for loading the NEW ACCOUNT ACTIVITY
      * To Do: left commented code for message passing
      */
     private void loadNewAccountActivity(){
