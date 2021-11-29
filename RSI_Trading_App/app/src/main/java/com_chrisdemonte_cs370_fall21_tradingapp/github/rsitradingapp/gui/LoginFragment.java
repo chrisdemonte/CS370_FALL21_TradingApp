@@ -11,12 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.MainActivity;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.R;
 
 public class LoginFragment extends Fragment {
 
     public LoginFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -24,6 +25,7 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login, container, false);
+
     }
 
 
