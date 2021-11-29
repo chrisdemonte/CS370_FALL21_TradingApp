@@ -12,6 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
@@ -79,8 +83,20 @@ public class MainActivity extends AppCompatActivity {
                     suggest = "SELL";
                 }
                 suggestion.setText(suggest);
+                updateGraph(stock);
             }
         }
+    }
+    public void updateGraph(Stock stock){
+        GraphView graph = findViewById(R.id.graphView1);
+        graph.removeAllSeries();
+
+        LineGraphSeries<DataPoint> dataSeries = new LineGraphSeries<>();
+        for (int i = 0; i < stock.getNumPrices(); i++){
+            dataSeries.appendData(new DataPoint(i, stock.getHistoricPrices()[i]), true, stock.getNumPrices() + 1);
+        }
+        graph.addSeries(dataSeries);
+
     }
 
     public void loadLoginFragment(){

@@ -168,5 +168,28 @@
             android:text="Simulation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/graphBg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@android:color/background_light"
+            app:layout_constraintBottom_toBottomOf="@+id/graphView1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/graphView1"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graphView1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="11dp"
+            app:layout_constraintBottom_toTopOf="@+id/topBlock2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/priceText" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
