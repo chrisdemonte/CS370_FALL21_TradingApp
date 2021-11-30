@@ -1,23 +1,22 @@
 package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-
-import java.lang.reflect.Method;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.UserUtils;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.HomeFragment;
@@ -29,7 +28,9 @@ import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.User
 public class MainActivity extends AppCompatActivity {
 
     public static User USER;
+    public static ArrayList<Stock> STOCKS;
     public static int displayedStock = 0;
+    public FirebaseFirestore database;
     public LoginFragment login = new LoginFragment();
     public HomeFragment home = new HomeFragment();
 
@@ -41,7 +42,26 @@ public class MainActivity extends AppCompatActivity {
         giveLoginButtonsActions();
         loadLoginFragment();
 
-        USER = new User();
+
+        USER = new User(1);
+        STOCKS = new ArrayList<Stock>();
+        STOCKS.add(new Stock(1));
+        STOCKS.add(new Stock(2));
+
+        /*
+        database = FirebaseFirestore.getInstance();
+        Log.println(Log.INFO, "database", database.toString());
+        DocumentReference userTable = database.document("userdata/usertable");
+        Map<String, Object> user1 = new HashMap<String, Object>();
+        user1.put("username", USER.getUsername());
+        user1.put("password", USER.getPassword());
+        user1.put("email", USER.getEmail());
+        user1.put("capital", USER.getCapital());
+        user1.put("numStocks", USER.getNumStocks());
+
+        userTable.set(user1);
+*/
+
         giveHomeButtonsActions();
 
     }
@@ -64,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     public void updateStockDisplay(){
         if (USER != null){
             if (displayedStock < USER.getNumStocks()){
-                Stock stock = USER.getStocks().get(displayedStock);
+                Stock stock = STOCKS.get(displayedStock);
                 final TextView ticker = findViewById(R.id.tickerText);
                 final TextView company = findViewById(R.id.companyText);
                 final TextView RSI = findViewById(R.id.rsiText);
@@ -135,7 +155,18 @@ public class MainActivity extends AppCompatActivity {
         });
         createNewButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                loadNewAccountActivity();
+               // loadNewAccountActivity();
+                database = FirebaseFirestore.getInstance();
+                Log.println(Log.INFO, "database", database.toString());
+                DocumentReference userTable = database.document("userdata/"+ USER.getUsername());
+                Map<String, Object> user1 = new HashMap<String, Object>();
+                user1.put("username", USER.getUsername());
+                user1.put("password", USER.getPassword());
+                user1.put("email", USER.getEmail());
+                user1.put("capital", USER.getCapital());
+                user1.put("numStocks", USER.getNumStocks());
+
+                userTable.set(user1);
             }
         });
     }
