@@ -28,7 +28,6 @@ import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.User
 public class MainActivity extends AppCompatActivity {
 
     public static User USER;
-    public static ArrayList<Stock> STOCKS;
     public static int displayedStock = 0;
     public FirebaseFirestore database;
     public LoginFragment login = new LoginFragment();
@@ -38,37 +37,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        USER = new User(1);
+        database = FirebaseFirestore.getInstance();
+        //this.saveUserToDatabase();
 
         giveLoginButtonsActions();
         loadLoginFragment();
-
-
-        USER = new User(1);
-        STOCKS = new ArrayList<Stock>();
-        STOCKS.add(new Stock(1));
-        STOCKS.add(new Stock(2));
-
-        /*
-        database = FirebaseFirestore.getInstance();
-        Log.println(Log.INFO, "database", database.toString());
-        DocumentReference userTable = database.document("userdata/usertable");
-        Map<String, Object> user1 = new HashMap<String, Object>();
-        user1.put("username", USER.getUsername());
-        user1.put("password", USER.getPassword());
-        user1.put("email", USER.getEmail());
-        user1.put("capital", USER.getCapital());
-        user1.put("numStocks", USER.getNumStocks());
-
-        userTable.set(user1);
-*/
-
         giveHomeButtonsActions();
-
     }
 
-     /** Method for loading the NEW ACCOUNT ACTIVITY
-     * To Do: left commented code for message passing
-     */
     private void loadNewAccountActivity(){
         Intent intent = new Intent(this, NewAccountActivity.class);
         //   intent.putExtra(EXTRA_MESSAGE, message);
@@ -84,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     public void updateStockDisplay(){
         if (USER != null){
             if (displayedStock < USER.getNumStocks()){
-                Stock stock = STOCKS.get(displayedStock);
+                Stock stock = USER.getStocks().get(displayedStock);
                 final TextView ticker = findViewById(R.id.tickerText);
                 final TextView company = findViewById(R.id.companyText);
                 final TextView RSI = findViewById(R.id.rsiText);
@@ -155,18 +132,7 @@ public class MainActivity extends AppCompatActivity {
         });
         createNewButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-               // loadNewAccountActivity();
-                database = FirebaseFirestore.getInstance();
-                Log.println(Log.INFO, "database", database.toString());
-                DocumentReference userTable = database.document("userdata/"+ USER.getUsername());
-                Map<String, Object> user1 = new HashMap<String, Object>();
-                user1.put("username", USER.getUsername());
-                user1.put("password", USER.getPassword());
-                user1.put("email", USER.getEmail());
-                user1.put("capital", USER.getCapital());
-                user1.put("numStocks", USER.getNumStocks());
-
-                userTable.set(user1);
+                loadNewAccountActivity();
             }
         });
     }
@@ -197,5 +163,26 @@ public class MainActivity extends AppCompatActivity {
                 updateStockDisplay();
             }
         });
+    }
+    public void saveUserToDatabase(){
+        DocumentReference userTable = database.document("userdata/"+ USER.getUsername());
+        Map<String, Object> user1 = new HashMap<String, Object>();
+        user1.put("username", USER.getUsername());
+        user1.put("password", USER.getPassword());
+        user1.put("email", USER.getEmail());
+        user1.put("capital", USER.getCapital());
+        user1.put("numStocks", USER.getNumStocks());
+        userTable.set(user1);
+
+        for (int i = 0; i < USER.getNumStocks(); i++){
+            DocumentReference stockTable = database.document("stockTable/"+ USER.getUsername() + i);
+            Map<String, Object> stockData = new HashMap<String, Object>();
+            Stock stock = USER.getStocks().get(i);
+            stockData.put("ticker", stock.getTicker());
+            stockData.put("company", stock.getCompany());
+            stockData.put("numOwned", stock.getNumOwned());
+            stockTable.set(stockData);
+        }
+
     }
 }

@@ -3,13 +3,12 @@ package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
-@IgnoreExtraProperties
 public class User {
     private String username;
     private String password;
     private String email;
     private int capital;
-    //private StockLight[] stocks;
+    private ArrayList<Stock> stocks;
     private int numStocks;
 
     //default User for testing purposes
@@ -20,11 +19,12 @@ public class User {
         this.username = "Test1";
         this.password = "$Password1";
         this.email = "email@email.com";
-        this.numStocks = 2;
+        this.numStocks = 0;
         this.capital = 500;
-     //   this.stocks = new StockLight[2];
-      //  this.stocks[0] = new StockLight(this.username, "APPL", 1);
-     //   this.stocks[1] = new StockLight(this.username, "GOOGL", 1);
+        this.stocks = new ArrayList<Stock>();
+        this.addStock(new Stock(1));
+        this.addStock(new Stock(2));
+
     }
 
     public User(String username, String password, String email) {
@@ -32,6 +32,8 @@ public class User {
         this.password = password;
         this.email = email;
         this.capital = 0;
+        this.numStocks = 0;
+        this.stocks = new ArrayList<Stock>();
     }
 
     public String getUsername() {
@@ -73,27 +75,22 @@ public class User {
     public void setCapital(int capital) {
         this.capital = capital;
     }
-/*
-    public StockLight[] getStocks() {
+
+    public ArrayList<Stock> getStocks() {
         return stocks;
     }
 
-    public void setStocks(StockLight[] stocks) {
+    public void setStocks(ArrayList<Stock> stocks) {
         this.stocks = stocks;
     }
-    public void addStock(String ticker, int amount){
-        for (int i = 0; i < this.numStocks; i++){
-            if (ticker.contentEquals(this.stocks[i].getTicker())){
-                this.stocks[i].changeAmount(amount);
+    public void addStock(Stock stock){
+        for (int i = 0; i < numStocks; i++){
+            if (stock.getTicker().contentEquals(this.stocks.get(i).getTicker())){
+                this.stocks.get(i).setNumOwned(this.stocks.get(i).getNumOwned() + stock.getNumOwned());
                 return;
             }
         }
-        StockLight[] newStocks = new StockLight[numStocks + 1];
-        for (int i = 0; i < this.numStocks; i++){
-            newStocks[i] = this.stocks[i];
-        }
-        newStocks[this.numStocks] = new StockLight (this.username, ticker, amount);
+        this.stocks.add(stock);
         this.numStocks++;
-
-    }*/
+    }
 }
