@@ -1,5 +1,6 @@
 package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
@@ -125,9 +130,7 @@ public class MainActivity extends AppCompatActivity {
                     errorTextView.setText(UserUtils.getPasswordErrorMsg(result));
                     return;
                 }
-                errorTextView.setVisibility(View.INVISIBLE);
-                errorTextView.setText("Unknown Error!");
-                loadHomeFragment();
+                attemptLogin();
             }
         });
         createNewButton.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +167,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    public void attemptLogin(){
+        final EditText usernameEntry = findViewById(R.id.usernameEntry);
+        String username = usernameEntry.getText().toString();
+
+        CollectionReference userData = database.collection("userdata");
+        DocumentReference userDoc = userData.document(username);
+
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                final TextView errorTextView = findViewById(R.id.errorMessageTextView);
+                if (task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc.exists()){
+                        final EditText passwordEntry = findViewById(R.id.passwordEntry);
+                        String password = passwordEntry.getText().toString();
+                        String docPass = (String) doc.get("password");
+                        if (password.contentEquals(docPass)){
+                            errorTextView.setVisibility(View.INVISIBLE);
+                            loadHomeFragment();
+                        }
+                        else {
+                            errorTextView.setVisibility(View.VISIBLE);
+                            errorTextView.setText("Password Incorrect.");
+                        }
+
+                    }
+                    else {
+                        errorTextView.setVisibility(View.VISIBLE);
+                        errorTextView.setText("No Such User Exists.");
+                        }
+                    }
+                else {
+                    errorTextView.setVisibility(View.VISIBLE);
+                    errorTextView.setText("Database Error.");
+                }
+            }
+        });
+    }
     public void saveUserToDatabase(){
         DocumentReference userTable = database.document("userdata/"+ USER.getUsername());
         Map<String, Object> user1 = new HashMap<String, Object>();
@@ -175,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         userTable.set(user1);
 
         for (int i = 0; i < USER.getNumStocks(); i++){
-            DocumentReference stockTable = database.document("stockTable/"+ USER.getUsername() + i);
+            DocumentReference stockTable = database.document("stockdata/"+ USER.getUsername() + "_" + i);
             Map<String, Object> stockData = new HashMap<String, Object>();
             Stock stock = USER.getStocks().get(i);
             stockData.put("ticker", stock.getTicker());

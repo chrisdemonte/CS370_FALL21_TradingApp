@@ -135,7 +135,8 @@
     <TextView
         android:id="@+id/errorMessageTextView2"
         android:layout_width="wrap_content"
-        android:layout_height="19dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:layout_marginBottom="180dp"
         android:text="Error!"
         android:textColor="#E91E63"
@@ -143,5 +144,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordEntry" />
+        app:layout_constraintTop_toBottomOf="@+id/createButton"
+        app:layout_constraintVertical_bias="0.26" />
 </androidx.constraintlayout.widget.ConstraintLayout>

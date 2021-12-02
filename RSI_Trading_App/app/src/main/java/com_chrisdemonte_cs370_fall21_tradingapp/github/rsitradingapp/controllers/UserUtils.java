@@ -53,6 +53,19 @@ public class UserUtils {
         }
         return 1;                       //password passes, so return 1
     }
+    public static int validateEmail(String email){
+        if (email.length() == 0){    //if the email is empty string return -1
+            return -1;
+        }
+        if (email.length() < 3){     //if the password is under 5 chars return -2
+            return -2;
+        }
+        Pattern pattern = Pattern.compile("^(.+)@(.+)$"); //regex pattern for numeric chars
+        if (!pattern.matcher(email).find()){
+            return -3;
+        }
+        return 1;
+    }
     public static String getUsernameErrorMsg(int errorNumber){
         if (errorNumber == -1){    //if the username is empty string
             return "No username was entered!";
@@ -94,5 +107,11 @@ public class UserUtils {
             return "Password cannot contain any white space!";
         }
         return "Unknown Password Error!";
+    }
+    public static String getEmailErrorMessage(int errorNumber){
+        if (errorNumber == -1){
+            return "No email was entered!";
+        }
+        return "Email is not valid!";
     }
 }
