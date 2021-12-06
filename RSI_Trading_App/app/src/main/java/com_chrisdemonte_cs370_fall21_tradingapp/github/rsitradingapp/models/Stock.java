@@ -80,6 +80,10 @@ public class Stock {
         this.averageGain /= (double)(this.numPrices - 1);
     }
 
+    @Override
+    public String toString() {
+        return ticker + ": " + company;
+    }
 
     public String getTicker() {
         return ticker;

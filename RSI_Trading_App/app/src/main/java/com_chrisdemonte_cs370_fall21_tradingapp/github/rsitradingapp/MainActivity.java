@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,11 +21,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.UserUtils;
+import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.AccountEditFragment;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.HomeFragment;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.LoginFragment;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.NewAccountActivity;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public FirebaseFirestore database;
     public LoginFragment login = new LoginFragment();
     public HomeFragment home = new HomeFragment();
+    public AccountEditFragment accountEdit = new AccountEditFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         giveLoginButtonsActions();
         loadLoginFragment();
         giveHomeButtonsActions();
+        giveAccountEditButtonsActions();
     }
 
     private void loadNewAccountActivity(){
@@ -60,9 +65,11 @@ public class MainActivity extends AppCompatActivity {
     public void loadHomeFragment(){
         findViewById(R.id.loginLayout).setVisibility(View.GONE);
         findViewById(R.id.homeLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
         updateStockDisplay();
 
     }
+
     public void updateStockDisplay(){
         if (USER != null){
             if (displayedStock < USER.getNumStocks()){
@@ -104,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
     public void loadLoginFragment(){
         findViewById(R.id.loginLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.homeLayout).setVisibility(View.GONE);
+        findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
 
     }
     public void giveLoginButtonsActions(){
@@ -144,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         Button logoutButton = findViewById(R.id.logoutButton);
         Button nextButton = findViewById(R.id.nextStockButton);
         Button previousButton = findViewById(R.id.previousStockButton);
+        Button editAccountButton = findViewById(R.id.editButton);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -164,6 +173,110 @@ public class MainActivity extends AppCompatActivity {
                     displayedStock = USER.getNumStocks() - 1;
                 }
                 updateStockDisplay();
+            }
+        });
+        editAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAccountEditFragment();
+            }
+        });
+    }
+    public void loadAccountEditFragment(){
+        findViewById(R.id.loginLayout).setVisibility(View.GONE);
+        findViewById(R.id.homeLayout).setVisibility(View.GONE);
+        findViewById(R.id.accountEditFragment).setVisibility(View.VISIBLE);
+
+        TextView usernameView = findViewById(R.id.usernameView);
+        usernameView.setText(USER.getUsername());
+
+        EditText passwordEntry = findViewById(R.id.editTextPassword);
+
+        EditText emailEntry = findViewById(R.id.emailEditText);
+        emailEntry.setText(USER.getEmail());
+
+        EditText capitalEntry = findViewById(R.id.capitalEditText);
+        double capital = ((double)USER.getCapital())/100.0;
+        capitalEntry.setText(capital + "");
+
+        refreshStockSpinner();
+        Spinner spinner = findViewById(R.id.removeStockSpinner);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                Stock selectedItem = (Stock) parent.getItemAtPosition(position);
+                TextView amount = findViewById(R.id.stockOwnedView);
+                amount.setText("Amount Owned: " + selectedItem.getNumOwned());
+
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+                TextView amount = findViewById(R.id.stockOwnedView);
+                amount.setText("Amount Owned:");
+            }
+        });
+
+        Button removeStockButton = findViewById(R.id.removeStockButton);
+        removeStockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Spinner spinner = findViewById(R.id.removeStockSpinner);
+                TextView amount = findViewById(R.id.stockOwnedView);
+                Stock stock = (Stock) spinner.getSelectedItem();
+                if (stock!=null) {
+                    USER.removeStock(stock);
+                    amount.setText("Amount Owned:");
+                    refreshStockSpinner();
+                }
+            }
+        });
+
+        Button addStockButton = findViewById(R.id.addStockButton);
+        addStockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Spinner spinner = findViewById(R.id.removeStockSpinner);
+                TextView amount = findViewById(R.id.stockOwnedView);
+                Stock stock = (Stock) spinner.getSelectedItem();
+                if (stock!=null) {
+                    stock.setNumOwned(stock.getNumOwned() + 1);
+                    amount.setText("Amount Owned: " + stock.getNumOwned());
+                }
+            }
+        });
+        Button reduceStockButton = findViewById(R.id.reduceStockButton);
+        reduceStockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Spinner spinner = findViewById(R.id.removeStockSpinner);
+                TextView amount = findViewById(R.id.stockOwnedView);
+                Stock stock = (Stock) spinner.getSelectedItem();
+                if (stock!=null) {
+                    if (stock.getNumOwned() > 0) {
+                        stock.setNumOwned(stock.getNumOwned() - 1);
+                        amount.setText("Amount Owned: " + stock.getNumOwned());
+                    }
+                }
+            }
+        });
+
+    }
+    public void refreshStockSpinner(){
+        Spinner spinner = findViewById(R.id.removeStockSpinner);
+        ArrayAdapter<Stock> adapter = new ArrayAdapter<Stock>(this, android.R.layout.simple_spinner_item, USER.getStocks());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+    }
+    public void giveAccountEditButtonsActions(){
+        Button cancelButton = findViewById(R.id.cancelButton);
+        Button saveButton = findViewById(R.id.saveButton);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadHomeFragment();
             }
         });
     }
@@ -225,6 +338,9 @@ public class MainActivity extends AppCompatActivity {
             stockData.put("numOwned", stock.getNumOwned());
             stockTable.set(stockData);
         }
+
+    }
+    public void loadUserFromDatabase(){
 
     }
 }

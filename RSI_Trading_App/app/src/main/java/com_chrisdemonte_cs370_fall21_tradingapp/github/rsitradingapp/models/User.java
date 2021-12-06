@@ -93,4 +93,8 @@ public class User {
         this.stocks.add(stock);
         this.numStocks++;
     }
+    public void removeStock(Stock stock){
+        this.stocks.remove(stock);
+        this.numStocks--;
+    }
 }
