@@ -12,6 +12,9 @@ public class Stock {
     private double averageGain;
     private double averageLoss;
 
+    public Stock(){
+
+    }
     public Stock(int num){
         if (num == 1) {
             this.ticker = "APPL";

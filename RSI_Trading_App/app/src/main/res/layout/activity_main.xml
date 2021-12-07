@@ -32,5 +32,11 @@
             android:name="com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.AccountEditFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <fragment
+            android:id="@+id/addStockFragment"
+            android:name="com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.AddStockFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

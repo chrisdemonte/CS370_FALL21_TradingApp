@@ -1,9 +1,12 @@
 package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,8 +28,10 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.HashMap;
 import java.util.Map;
 
+import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.StockUtils;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.UserUtils;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.AccountEditFragment;
+import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.AddStockFragment;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.HomeFragment;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.LoginFragment;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.NewAccountActivity;
@@ -37,18 +42,25 @@ public class MainActivity extends AppCompatActivity {
 
     public static User USER;
     public static int displayedStock = 0;
+    private int stockDownloadProgress = 0;
     public FirebaseFirestore database;
     public LoginFragment login = new LoginFragment();
     public HomeFragment home = new HomeFragment();
     public AccountEditFragment accountEdit = new AccountEditFragment();
+    public AddStockFragment addStockFragment = new AddStockFragment();
+
+    private boolean changes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        USER = new User(1);
+        USER = new User("", "", "");
         database = FirebaseFirestore.getInstance();
         //this.saveUserToDatabase();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
 
         giveLoginButtonsActions();
         loadLoginFragment();
@@ -66,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.loginLayout).setVisibility(View.GONE);
         findViewById(R.id.homeLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
+        findViewById(R.id.addStockFragment).setVisibility(View.GONE);
         updateStockDisplay();
 
     }
@@ -112,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.loginLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.homeLayout).setVisibility(View.GONE);
         findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
+        findViewById(R.id.addStockFragment).setVisibility(View.GONE);
 
     }
     public void giveLoginButtonsActions(){
@@ -153,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         Button nextButton = findViewById(R.id.nextStockButton);
         Button previousButton = findViewById(R.id.previousStockButton);
         Button editAccountButton = findViewById(R.id.editButton);
+        Button trackNewStockButton = findViewById(R.id.addNewStockButton);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -170,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 displayedStock--;
                 if (displayedStock < 0){
-                    displayedStock = USER.getNumStocks() - 1;
+                    displayedStock = (int)USER.getNumStocks() - 1;
                 }
                 updateStockDisplay();
             }
@@ -181,11 +196,18 @@ public class MainActivity extends AppCompatActivity {
                 loadAccountEditFragment();
             }
         });
+        trackNewStockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAddStockFragment();
+            }
+        });
     }
     public void loadAccountEditFragment(){
         findViewById(R.id.loginLayout).setVisibility(View.GONE);
         findViewById(R.id.homeLayout).setVisibility(View.GONE);
         findViewById(R.id.accountEditFragment).setVisibility(View.VISIBLE);
+        findViewById(R.id.addStockFragment).setVisibility(View.GONE);
 
         TextView usernameView = findViewById(R.id.usernameView);
         usernameView.setText(USER.getUsername());
@@ -262,6 +284,45 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    public void loadAddStockFragment(){
+        findViewById(R.id.loginLayout).setVisibility(View.GONE);
+        findViewById(R.id.homeLayout).setVisibility(View.GONE);
+        findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
+        findViewById(R.id.addStockFragment).setVisibility(View.VISIBLE);
+        changes = false;
+
+        Button doneButton = findViewById(R.id.newStockDoneButton);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (changes){
+                    //saveUserToDatabase();
+                }
+                loadHomeFragment();
+            }
+        });
+        Button stockSearchButton = findViewById(R.id.stockSearchButton);
+        EditText tickerInput = findViewById(R.id.tickerInputEditText);
+        TextView stockDataOutput = findViewById(R.id.newStockDataTextView);
+        stockSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ticker = tickerInput.getText().toString();
+                String stockData = StockUtils.getBasicStockData(ticker);
+                stockDataOutput.setText(stockData);
+            }
+        });
+        Button trackNewButton = findViewById(R.id.trackNewStockButton);
+        trackNewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!stockDataOutput.getText().toString().contentEquals("Invalid Ticker")){
+                    USER.addStock(StockUtils.temp);
+                    changes = true;
+                }
+            }
+        });
+    }
     public void refreshStockSpinner(){
         Spinner spinner = findViewById(R.id.removeStockSpinner);
         ArrayAdapter<Stock> adapter = new ArrayAdapter<Stock>(this, android.R.layout.simple_spinner_item, USER.getStocks());
@@ -277,6 +338,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadHomeFragment();
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -299,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
                         String docPass = (String) doc.get("password");
                         if (password.contentEquals(docPass)){
                             errorTextView.setVisibility(View.INVISIBLE);
+                            loadUserFromDatabase(doc);
                             loadHomeFragment();
                         }
                         else {
@@ -340,7 +408,47 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    public void loadUserFromDatabase(){
+
+    public void loadUserFromDatabase(DocumentSnapshot userData){
+        USER.setUsername((String)userData.get("username"));
+        USER.setPassword((String)userData.get("password"));
+        USER.setEmail((String)userData.get("email"));
+        Long cap = (long)userData.get("capital");
+        USER.setCapital(cap.intValue());
+        USER.setNumStocks(0);
+        Long num = (long)userData.get("numStocks");
+        this.stockDownloadProgress = num.intValue();
+
+        CollectionReference stockData = database.collection("stockdata");
+        for (int i = 0; i < this.stockDownloadProgress; i++) {
+            DocumentReference stockDoc = stockData.document(USER.getUsername() + "_" + i);
+
+            stockDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    final TextView errorTextView = findViewById(R.id.errorMessageTextView);
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot doc = task.getResult();
+                        if (doc.exists()) {
+                            Long num = (long)doc.get("numOwned");
+                            Stock stock = new Stock ((String)doc.get("ticker"), (String)doc.get("company"), num.intValue());
+                            USER.addStock(stock);
+                            if (USER.getNumStocks() >= stockDownloadProgress){
+                                loadHomeFragment();
+                            }
+
+                        } else {
+                            errorTextView.setVisibility(View.VISIBLE);
+                            errorTextView.setText("Error getting stock data");
+                        }
+                    } else {
+                        errorTextView.setVisibility(View.VISIBLE);
+                        errorTextView.setText("Database Error getting stock data.");
+                    }
+                }
+            });
+        }
+
 
     }
 }
