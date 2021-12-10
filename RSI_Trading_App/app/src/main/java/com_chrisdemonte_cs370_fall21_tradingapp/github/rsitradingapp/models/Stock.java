@@ -1,11 +1,14 @@
 package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models;
 
+import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.StockUtils;
+
 public class Stock {
     private String ticker;
     private String company;
     private double currentPrice;
     private int numOwned;
     private double[] historicPrices;
+    private String[] historicTimestamps;
     private int numPrices;
     private double rsi;
     private double rsi2;
@@ -17,7 +20,7 @@ public class Stock {
     }
     public Stock(int num){
         if (num == 1) {
-            this.ticker = "APPL";
+            this.ticker = "AAPL";
             this.company = "Apple Inc.";
             this.currentPrice = 148.69;
             double[] arr = {147.92, 150.81, 150.44, 151.28, 150.96, 151.49, 150.02, 148.96, 149.80, 152.57, 148.85, 149.32, 148.64, 148.69};
@@ -26,7 +29,7 @@ public class Stock {
             this.numOwned = 1;
         }
         else {
-            this.ticker = "NASDAQ: GOOGL";
+            this.ticker = "GOOGL";
             this.company = "Alphabet Inc. Class A";
             this.currentPrice = 2935.11;
             double[] arr = {2984.97, 2932.52, 2934.96, 2992.91, 2987.76, 2981.52, 2981.24, 3014.18, 2999.05, 2941.57, 2935.14, 2934.35, 2856.12, 2935.11};
@@ -46,7 +49,7 @@ public class Stock {
     }
 
     public void apiCall(){
-
+        StockUtils.decorateStock(this);
     }
     public void calculateRSI1(){
         calculateGainLoss();
@@ -166,5 +169,13 @@ public class Stock {
 
     public void setNumOwned(int numOwned) {
         this.numOwned = numOwned;
+    }
+
+    public String[] getHistoricTimestamps() {
+        return historicTimestamps;
+    }
+
+    public void setHistoricTimestamps(String[] historicTimestamps) {
+        this.historicTimestamps = historicTimestamps;
     }
 }

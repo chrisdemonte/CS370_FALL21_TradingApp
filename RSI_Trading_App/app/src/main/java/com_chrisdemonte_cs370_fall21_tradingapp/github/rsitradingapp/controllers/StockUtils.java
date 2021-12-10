@@ -1,6 +1,7 @@
 package com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -50,6 +51,63 @@ public class StockUtils  {
             response = e.toString();
         }
         return response;
+    }
+    public static void decorateStock(Stock stock){
+        String requestURL = priceDataURL + "&symbol=" + stock.getTicker() + "&outputsize=compact&apikey=" + apiKey;
+        try {
+            URL request = new URL(requestURL);
+            URLConnection connection = request.openConnection();
+            connection.connect();
+            InputStream stream = connection.getInputStream();
+            StringBuilder textBuilder = new StringBuilder();
+            Reader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName(StandardCharsets.UTF_8.name())));
+            int c = 0;
+            while ((c = reader.read()) != -1) {
+                textBuilder.append((char) c);
+            }
+            response = textBuilder.toString();
+            stock.setNumPrices(100);
+            String[] timestamps = new String[100];
+            double[] prices = new double[100];
+            Scanner scanner = new Scanner(response);
+            String line;
+            int counter = 0;
+
+            while (true) {
+                line = scanner.nextLine();
+                if (line.contains("\"Time Series (Daily)\": {")) {
+                    break;
+                }
+            }
+            while (counter < 100 ){
+                timestamps[counter] = scanner.nextLine().trim().substring(1,11);
+                scanner.nextLine();
+                scanner.nextLine();
+                scanner.nextLine();
+                line = scanner.nextLine().trim().substring(13).replace(",", "").replace("\"","");//23, 29
+                prices[counter] = Double.parseDouble(line);
+                scanner.nextLine();
+                scanner.nextLine();
+                scanner.nextLine();
+                scanner.nextLine();
+                scanner.nextLine();
+                counter++;
+            }
+            stock.setCurrentPrice(prices[0]);
+            stock.setHistoricTimestamps(timestamps);
+            stock.setHistoricPrices(prices);
+            stock.calculateGainLoss();
+            stock.calculateRSI1();
+        }
+        catch (MalformedURLException e){
+            Log.d("Error: ", e.toString());
+        }
+        catch (IOException e){
+            Log.d("Error: ", e.toString());
+        }
+        catch (NumberFormatException e){
+            Log.d("Error: ", e.toString());
+        }
     }
     public static String trimResponse (String text){
         StringBuilder responseBuilder = new StringBuilder();

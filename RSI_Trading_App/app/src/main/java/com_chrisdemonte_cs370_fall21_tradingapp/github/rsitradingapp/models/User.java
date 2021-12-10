@@ -10,21 +10,22 @@ public class User {
     private int capital;
     private ArrayList<Stock> stocks;
     private int numStocks;
+    private int prevNumStocks;
+    private double currentWorth;
 
-    //default User for testing purposes
     public User(){
-
     }
+    //default User used for testing purposes
     public User(int num){
         this.username = "Test1";
         this.password = "$Password1";
         this.email = "email@email.com";
         this.numStocks = 0;
+        this.prevNumStocks = this.numStocks;
         this.capital = 500;
         this.stocks = new ArrayList<Stock>();
         this.addStock(new Stock(1));
         this.addStock(new Stock(2));
-
     }
 
     public User(String username, String password, String email) {
@@ -33,6 +34,7 @@ public class User {
         this.email = email;
         this.capital = 0;
         this.numStocks = 0;
+        this.prevNumStocks = 0;
         this.stocks = new ArrayList<Stock>();
     }
 
@@ -80,6 +82,22 @@ public class User {
         return stocks;
     }
 
+    public double getCurrentWorth() {
+        return currentWorth;
+    }
+
+    public void setCurrentWorth(double currentWorth) {
+        this.currentWorth = currentWorth;
+    }
+
+    public int getPrevNumStocks() {
+        return prevNumStocks;
+    }
+
+    public void setPrevNumStocks(int prevNumStocks) {
+        this.prevNumStocks = prevNumStocks;
+    }
+
     public void setStocks(ArrayList<Stock> stocks) {
         this.stocks = stocks;
     }
@@ -97,4 +115,12 @@ public class User {
         this.stocks.remove(stock);
         this.numStocks--;
     }
+    public void calculateCurrentWorth(){
+        currentWorth += ((double) capital) / 100.0;
+        for (int i = 0; i < numStocks; i++){
+            currentWorth += stocks.get(i).getCurrentPrice() * stocks.get(i).getNumOwned();
+            currentWorth = Math.round(currentWorth * 100.0)/100.0;
+        }
+    }
+
 }

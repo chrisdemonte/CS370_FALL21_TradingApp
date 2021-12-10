@@ -79,20 +79,36 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.homeLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
         findViewById(R.id.addStockFragment).setVisibility(View.GONE);
+        USER.calculateCurrentWorth();
         updateStockDisplay();
 
     }
 
     public void updateStockDisplay(){
         if (USER != null){
-            if (displayedStock < USER.getNumStocks()){
-                Stock stock = USER.getStocks().get(displayedStock);
-                final TextView ticker = findViewById(R.id.tickerText);
-                final TextView company = findViewById(R.id.companyText);
-                final TextView RSI = findViewById(R.id.rsiText);
-                final TextView currentPrice = findViewById(R.id.priceText);
-                final TextView suggestion = findViewById(R.id.buySellText);
+            final TextView ticker = findViewById(R.id.tickerText);
+            final TextView company = findViewById(R.id.companyText);
+            final TextView RSI = findViewById(R.id.rsiText);
+            final TextView currentPrice = findViewById(R.id.priceText);
+            final TextView suggestion = findViewById(R.id.buySellText);
+            final TextView username = findViewById(R.id.usernameView);
+            final TextView capital = findViewById(R.id.capitalView);
 
+            username.setText(USER.getUsername());
+            double money = ((double)USER.getCapital())/100.0;
+            capital.setText("Capital: $" + money + "   Total Worth: $" + USER.getCurrentWorth());
+
+            if (USER.getNumStocks() == 0){
+                ticker.setText("No Stocks");
+                company.setText("Press ADD STOCKS to track new stocks.");
+                RSI.setText("RSI: None");
+                currentPrice.setText("Current Price: None");
+
+                suggestion.setText("");
+                updateGraph(null);
+            }
+            else if (displayedStock < USER.getNumStocks()){
+                Stock stock = USER.getStocks().get(displayedStock);
                 ticker.setText(stock.getTicker());
                 company.setText(stock.getCompany());
                 RSI.setText("RSI: " + String.valueOf(stock.getRsi()));
@@ -113,12 +129,13 @@ public class MainActivity extends AppCompatActivity {
         GraphView graph = findViewById(R.id.graphView1);
         graph.removeAllSeries();
 
-        LineGraphSeries<DataPoint> dataSeries = new LineGraphSeries<>();
-        for (int i = 0; i < stock.getNumPrices(); i++){
-            dataSeries.appendData(new DataPoint(i, stock.getHistoricPrices()[i]), true, stock.getNumPrices() + 1);
+        if (stock!=null) {
+            LineGraphSeries<DataPoint> dataSeries = new LineGraphSeries<>();
+            for (int i = 0; i < stock.getNumPrices(); i++) {
+                dataSeries.appendData(new DataPoint(i, stock.getHistoricPrices()[i]), true, stock.getNumPrices() + 1);
+            }
+            graph.addSeries(dataSeries);
         }
-        graph.addSeries(dataSeries);
-
     }
 
     public void loadLoginFragment(){
@@ -209,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.accountEditFragment).setVisibility(View.VISIBLE);
         findViewById(R.id.addStockFragment).setVisibility(View.GONE);
 
-        TextView usernameView = findViewById(R.id.usernameView);
+        TextView usernameView = findViewById(R.id.usernameTextView);
         usernameView.setText(USER.getUsername());
 
         EditText passwordEntry = findViewById(R.id.editTextPassword);
@@ -432,7 +449,9 @@ public class MainActivity extends AppCompatActivity {
                         if (doc.exists()) {
                             Long num = (long)doc.get("numOwned");
                             Stock stock = new Stock ((String)doc.get("ticker"), (String)doc.get("company"), num.intValue());
+                            stock.apiCall();
                             USER.addStock(stock);
+                            USER.setPrevNumStocks(USER.getPrevNumStocks() + 1);
                             if (USER.getNumStocks() >= stockDownloadProgress){
                                 loadHomeFragment();
                             }
