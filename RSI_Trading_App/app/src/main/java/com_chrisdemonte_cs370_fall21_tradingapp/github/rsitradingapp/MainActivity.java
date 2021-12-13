@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +40,7 @@ import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.AddStoc
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.HomeFragment;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.LoginFragment;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.gui.NewAccountActivity;
+import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.Simulator;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.Stock;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.User;
 
@@ -49,11 +51,6 @@ public class MainActivity extends AppCompatActivity {
     public static int displayedStock = 0;
     private int stockDownloadProgress = 0;
     public FirebaseFirestore database;
-    //public LoginFragment login = new LoginFragment();
-    //public HomeFragment home = new HomeFragment();
-    //public AccountEditFragment accountEdit = new AccountEditFragment();
-    //public AddStockFragment addStockFragment = new AddStockFragment();
-
     private boolean changes;
 
     @Override
@@ -62,16 +59,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         USER = new User("", "", "");
         database = FirebaseFirestore.getInstance();
-        //this.saveUserToDatabase();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
         StrictMode.setThreadPolicy(policy);
         loadLoginFragment();
     }
 
     private void loadNewAccountActivity(){
         Intent intent = new Intent(this, NewAccountActivity.class);
-        //   intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 
@@ -80,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.homeLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
         findViewById(R.id.addStockFragment).setVisibility(View.GONE);
+        findViewById(R.id.simFragment).setVisibility(View.GONE);
 
         USER.calculateCurrentWorth();
         if (displayedStock >= USER.getNumStocks()){
@@ -94,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         Button trackNewStockButton = findViewById(R.id.addNewStockButton);
         Button buyStockButton = findViewById(R.id.buyButton);
         Button sellStockButton = findViewById(R.id.sellButton);
+        Button simulationButton = findViewById(R.id.simButton);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -160,6 +156,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        simulationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (USER.getNumStocks() > 0){
+                    loadSimulationFragment();
+                }
+            }
+        });
+
     }
 
     public void makeToast(String message){
@@ -231,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.addStockFragment).setVisibility(View.GONE);
         findViewById(R.id.loadingPage).setVisibility(View.GONE);
         findViewById(R.id.loadingView).setVisibility(View.GONE);
+        findViewById(R.id.simFragment).setVisibility(View.GONE);
 
         final EditText usernameEntry = findViewById(R.id.usernameEntry);
         final EditText passwordEntry = findViewById(R.id.passwordEntry);
@@ -270,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.homeLayout).setVisibility(View.GONE);
         findViewById(R.id.accountEditFragment).setVisibility(View.VISIBLE);
         findViewById(R.id.addStockFragment).setVisibility(View.GONE);
+        findViewById(R.id.simFragment).setVisibility(View.GONE);
 
         TextView usernameView = findViewById(R.id.usernameView);
         usernameView.setText(USER.getUsername());
@@ -389,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.homeLayout).setVisibility(View.GONE);
         findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
         findViewById(R.id.addStockFragment).setVisibility(View.VISIBLE);
+        findViewById(R.id.simFragment).setVisibility(View.GONE);
         changes = false;
 
         Button doneButton = findViewById(R.id.newStockDoneButton);
@@ -431,6 +439,71 @@ public class MainActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
 
     }
+    public void loadSimulationFragment(){
+        findViewById(R.id.loginLayout).setVisibility(View.GONE);
+        findViewById(R.id.homeLayout).setVisibility(View.GONE);
+        findViewById(R.id.accountEditFragment).setVisibility(View.GONE);
+        findViewById(R.id.addStockFragment).setVisibility(View.GONE);
+        findViewById(R.id.simFragment).setVisibility(View.VISIBLE);
+
+        TextView simTicker = findViewById(R.id.simTickerView);
+        simTicker.setText(USER.getStocks().get(displayedStock).getTicker());
+
+        TextView userDataDisplay = findViewById(R.id.userWorthView1);
+        userDataDisplay.setText("Capital: " + USER.getCapital() + " Worth: " + USER.getCurrentWorth());
+
+        Button runButton = findViewById(R.id.simRunButton);
+        Button doneButton = findViewById(R.id.simDoneButton);
+
+        runButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateTransactionListView();
+            }
+        });
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadHomeFragment();
+            }
+        });
+
+    }
+    public void updateTransactionListView(){
+        EditText buyThresholdEdit = findViewById(R.id.buyThresholdEdit);
+        double buyThresh = Double.parseDouble(buyThresholdEdit.getText().toString());
+
+        EditText sellThresholdEdit = findViewById(R.id.sellThresholdAmount);
+        double sellThresh = Double.parseDouble(sellThresholdEdit.getText().toString());
+
+        EditText buyAmountEdit = findViewById(R.id.buyAmountEdit);
+        int buyAmount = Integer.parseInt(buyAmountEdit.getText().toString());
+
+        EditText sellAmountEdit = findViewById(R.id.sellAmountEdit);
+        int sellAmount = Integer.parseInt(sellAmountEdit.getText().toString());
+
+        Simulator sim = new Simulator(USER, USER.getStocks().get(displayedStock), buyThresh, sellThresh, buyAmount, sellAmount );
+        sim.runSimulation();
+
+        String output = "";
+        ArrayList<String> transactions = sim.getTransactions();
+        if (transactions.size() > 0) {
+            for (int i = 0; i < transactions.size(); i++) {
+                output += transactions.get(i) + "\n";
+            }
+        }
+        else {
+            output = "During the time period the stock never went below the buy threshold or above the sell threshold.";
+        }
+
+        TextView simDataDisplay = findViewById(R.id.simWorthView);
+        double possibleCapital = ((double)sim.getSimulatedCapital())/100.0;
+        simDataDisplay.setText("Possible Capital: " + possibleCapital + " Possible Worth: " + sim.getSimulatedWorth());
+
+        TextView transactionView = findViewById(R.id.transactionView);
+        transactionView.setMovementMethod(new ScrollingMovementMethod());
+        transactionView.setText(output);
+    }
     public void attemptLogin(){
         final EditText usernameEntry = findViewById(R.id.usernameEntry);
         String username = usernameEntry.getText().toString();
@@ -450,10 +523,11 @@ public class MainActivity extends AppCompatActivity {
                         String docPass = (String) doc.get("password");
                         if (password.contentEquals(docPass)){
                             errorTextView.setVisibility(View.INVISIBLE);
+                            loadHomeFragment();
                             findViewById(R.id.loadingPage).setVisibility(View.VISIBLE);
                             findViewById(R.id.loadingView).setVisibility(View.VISIBLE);
                             loadUserFromDatabase(doc);
-                            loadHomeFragment();
+                            //loadHomeFragment();
                         }
                         else {
                             errorTextView.setVisibility(View.VISIBLE);

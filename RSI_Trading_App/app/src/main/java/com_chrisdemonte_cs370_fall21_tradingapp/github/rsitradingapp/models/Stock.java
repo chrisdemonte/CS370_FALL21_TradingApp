@@ -37,7 +37,7 @@ public class Stock {
             this.numPrices = 14;
             this.numOwned = 1;
         }
-        this.calculateGainLoss(0, 14);
+       // this.calculateGainLoss(0, 14);
         this.calculateRSI1(0, 14);
        // this.calculateRSI2();
     }
@@ -181,4 +181,5 @@ public class Stock {
     public void setHistoricTimestamps(String[] historicTimestamps) {
         this.historicTimestamps = historicTimestamps;
     }
+
 }
