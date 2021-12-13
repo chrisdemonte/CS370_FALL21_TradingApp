@@ -110,17 +110,42 @@ public class User {
         }
         this.stocks.add(stock);
         this.numStocks++;
+        this.prevNumStocks++;
+    }
+    public void loadStock(Stock stock){
+        this.stocks.add(stock);
     }
     public void removeStock(Stock stock){
         this.stocks.remove(stock);
         this.numStocks--;
     }
     public void calculateCurrentWorth(){
-        currentWorth += ((double) capital) / 100.0;
+        currentWorth = ((double) capital) / 100.0;
         for (int i = 0; i < numStocks; i++){
             currentWorth += stocks.get(i).getCurrentPrice() * stocks.get(i).getNumOwned();
             currentWorth = Math.round(currentWorth * 100.0)/100.0;
         }
     }
-
+    public int buyStock(Stock stock){
+        int price = (int)(stock.getCurrentPrice() * 100.0);
+        if (price > this.capital){
+            return -1;
+        }
+        else {
+            this.capital -= price;
+            stock.setNumOwned(stock.getNumOwned() + 1);
+        }
+        return 1;
+    }
+    public int sellStock(Stock stock){
+        int price = (int)(stock.getCurrentPrice() * 100.0);
+        if (stock.getNumOwned() <= 0){
+            return -1;
+        }
+        else {
+            this.capital += price;
+            stock.setNumOwned(stock.getNumOwned() - 1);
+        }
+        return 1;
+    }
 }

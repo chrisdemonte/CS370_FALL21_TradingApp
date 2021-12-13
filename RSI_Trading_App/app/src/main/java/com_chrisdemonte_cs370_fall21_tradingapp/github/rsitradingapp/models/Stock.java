@@ -37,8 +37,8 @@ public class Stock {
             this.numPrices = 14;
             this.numOwned = 1;
         }
-        this.calculateGainLoss();
-        this.calculateRSI1();
+        this.calculateGainLoss(0, numPrices);
+        this.calculateRSI1(0, numPrices);
         this.calculateRSI2();
     }
 
@@ -51,9 +51,11 @@ public class Stock {
     public void apiCall(){
         StockUtils.decorateStock(this);
     }
-    public void calculateRSI1(){
-        calculateGainLoss();
-        this.rsi = 100.0 - (100.0/ (1.0 + ((this.averageGain / (double)numPrices)/(this.averageLoss/(double)numPrices))));
+    public double calculateRSI1(int start, int end){
+        calculateGainLoss(start, end);
+        int entries = end - start;
+        double rsi = 100.0 - (100.0/ (1.0 + ((this.averageGain / (double)entries)/(this.averageLoss/(double)entries))));
+        return rsi;
     }
     public void calculateRSI2(){
         double change = this.currentPrice - historicPrices[this.numPrices - 1];
@@ -69,12 +71,12 @@ public class Stock {
                 (1.0 + ((((this.averageGain * (double)(this.numPrices - 2)) + gain) / (double)numPrices)/
                         (((this.averageLoss * (double)(this.numPrices - 2)) + loss) / (double)numPrices))));
     }
-    public void calculateGainLoss(){
+    public void calculateGainLoss(int start, int end){
         double change;
         this.averageGain = 0;
         this.averageLoss = 0;
-        for(int i = 0; i < numPrices - 1; i++){
-            change = (this.historicPrices[i+1] - historicPrices[i])/this.historicPrices[i];
+        for(int i = end - 1; i > start; i--){
+            change = (this.historicPrices[i-1] - historicPrices[i])/this.historicPrices[i];
             if (change < 0){
                 this.averageLoss -= change;
             }

@@ -15,8 +15,9 @@
 
         <ImageView
             android:id="@+id/bgimage3"
-            android:layout_width="1356dp"
-            android:layout_height="981dp"
+            android:layout_width="1205dp"
+            android:layout_height="1205dp"
+            android:textAlignment="center"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +54,6 @@
             android:id="@+id/tickerText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TICKER"
             android:textSize="26sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +65,6 @@
             android:id="@+id/companyText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Company"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -76,7 +75,7 @@
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="RSI: ???"
+            android:text="RSI: "
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.103"
@@ -88,7 +87,6 @@
             android:layout_width="92dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="HOLD"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.007"
@@ -204,7 +202,6 @@
             android:id="@+id/capitalView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Capital: $0.00    Worth: $0.00"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -214,12 +211,43 @@
             android:id="@+id/usernameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username"
+            android:text="Welcome!"
             android:textSize="26sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBlock" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/loadingPage"
+            android:layout_width="1205dp"
+            android:layout_height="1022dp"
+            android:src="@drawable/stockchart"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/loadingView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

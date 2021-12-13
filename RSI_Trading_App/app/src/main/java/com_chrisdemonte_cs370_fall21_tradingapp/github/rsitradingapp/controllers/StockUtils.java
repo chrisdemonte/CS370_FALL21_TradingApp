@@ -66,6 +66,8 @@ public class StockUtils  {
                 textBuilder.append((char) c);
             }
             response = textBuilder.toString();
+            stream.close();
+            reader.close();
             stock.setNumPrices(100);
             String[] timestamps = new String[100];
             double[] prices = new double[100];
@@ -75,6 +77,7 @@ public class StockUtils  {
 
             while (true) {
                 line = scanner.nextLine();
+               // Log.d("Test", line);
                 if (line.contains("\"Time Series (Daily)\": {")) {
                     break;
                 }
@@ -96,8 +99,9 @@ public class StockUtils  {
             stock.setCurrentPrice(prices[0]);
             stock.setHistoricTimestamps(timestamps);
             stock.setHistoricPrices(prices);
-            stock.calculateGainLoss();
-            stock.calculateRSI1();
+            stock.calculateGainLoss(0, stock.getNumPrices());
+            stock.setRsi(stock.calculateRSI1(0, stock.getNumPrices()));
+            scanner.close();
         }
         catch (MalformedURLException e){
             Log.d("Error: ", e.toString());
@@ -121,7 +125,8 @@ public class StockUtils  {
             }
             if (line.contains("Symbol")){
                 temp = new Stock();
-                temp.setTicker(line.split(":")[1].replace(",","").replace("\"",""));
+                temp.setTicker(line.split(":")[1].replace(",","").replace("\"","").replace(" ",""));
+                Log.d("Test", temp.getTicker());
                 temp.setNumOwned(0);
                 responseBuilder.append(line.replace(",","").replace("\"",""));
                 responseBuilder.append("\n");
