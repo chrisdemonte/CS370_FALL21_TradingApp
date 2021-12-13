@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     makeToast("Not enough shares to sell stock.");
                 }
                 else {
+                    updateHomeUserDisplay();
                     saveUserToDatabase();
                 }
             }
@@ -154,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
                     makeToast("Not enough money to buy stock.");
                 }
                 else {
+                    updateHomeUserDisplay();
                     saveUserToDatabase();
                 }
             }
@@ -521,9 +523,9 @@ public class MainActivity extends AppCompatActivity {
                             USER.setPrevNumStocks(USER.getPrevNumStocks() + 1);
                             if (USER.getNumStocks() >= stockDownloadProgress){
                                 loadHomeFragment();
-                                findViewById(R.id.loadingPage).setVisibility(View.GONE);
-                                findViewById(R.id.loadingView).setVisibility(View.GONE);
                             }
+                            findViewById(R.id.loadingPage).setVisibility(View.GONE);
+                            findViewById(R.id.loadingView).setVisibility(View.GONE);
 
                         } else {
                             errorTextView.setVisibility(View.VISIBLE);
@@ -536,7 +538,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
-
+        if (USER.getNumStocks() == 0) {
+            findViewById(R.id.loadingPage).setVisibility(View.GONE);
+            findViewById(R.id.loadingView).setVisibility(View.GONE);
+        }
     }
 }

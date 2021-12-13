@@ -100,7 +100,7 @@ public class StockUtils  {
             stock.setHistoricTimestamps(timestamps);
             stock.setHistoricPrices(prices);
             stock.calculateGainLoss(0, stock.getNumPrices());
-            stock.setRsi(stock.calculateRSI1(0, stock.getNumPrices()));
+            stock.setRsi(stock.calculateRSI1(0, 14));
             scanner.close();
         }
         catch (MalformedURLException e){

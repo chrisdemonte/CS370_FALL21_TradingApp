@@ -37,9 +37,9 @@ public class Stock {
             this.numPrices = 14;
             this.numOwned = 1;
         }
-        this.calculateGainLoss(0, numPrices);
-        this.calculateRSI1(0, numPrices);
-        this.calculateRSI2();
+        this.calculateGainLoss(0, 14);
+        this.calculateRSI1(0, 14);
+       // this.calculateRSI2();
     }
 
     public Stock(String ticker, String company, int numOwned) {
@@ -75,6 +75,7 @@ public class Stock {
         double change;
         this.averageGain = 0;
         this.averageLoss = 0;
+        int entries = end - start;
         for(int i = end - 1; i > start; i--){
             change = (this.historicPrices[i-1] - historicPrices[i])/this.historicPrices[i];
             if (change < 0){
@@ -84,8 +85,8 @@ public class Stock {
                 this.averageGain += change;
             }
         }
-        this.averageLoss /= (double)(this.numPrices - 1);
-        this.averageGain /= (double)(this.numPrices - 1);
+        this.averageLoss /= (double)(entries);
+        this.averageGain /= (double)(entries);
     }
 
     @Override
