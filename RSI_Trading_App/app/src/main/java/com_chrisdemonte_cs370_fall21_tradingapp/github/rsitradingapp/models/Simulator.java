@@ -35,7 +35,7 @@ public class Simulator {
             if (rsi <= buyThreshold){
                 int transaction = 0;
                 for (int j = 0; j < buyAmount; j++){
-                    int result = user.buyStock(stock);
+                    int result = user.buyStock(stock, stock.getHistoricPrices()[i] * 100.0);
                     if (result > 0){
                         transaction += result;
                     }
@@ -48,7 +48,7 @@ public class Simulator {
             if (rsi >= sellThreshold){
                 int transaction = 0;
                 for (int j = 0; j < sellAmount; j++){
-                    int result = user.sellStock(stock);
+                    int result = user.sellStock(stock, stock.getHistoricPrices()[i] * 100.0);
                     if (result > 0){
                         transaction += result;
                     }

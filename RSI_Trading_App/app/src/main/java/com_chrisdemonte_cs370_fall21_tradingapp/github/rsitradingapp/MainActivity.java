@@ -450,10 +450,18 @@ public class MainActivity extends AppCompatActivity {
         simTicker.setText(USER.getStocks().get(displayedStock).getTicker());
 
         TextView userDataDisplay = findViewById(R.id.userWorthView1);
-        userDataDisplay.setText("Capital: " + USER.getCapital() + " Worth: " + USER.getCurrentWorth());
+        double capital = ((double)USER.getCapital())/100.0;
+        userDataDisplay.setText("Capital: " + capital + " Worth: " + USER.getCurrentWorth());
 
         Button runButton = findViewById(R.id.simRunButton);
         Button doneButton = findViewById(R.id.simDoneButton);
+
+        TextView transactionView = findViewById(R.id.transactionView);
+        transactionView.setMovementMethod(new ScrollingMovementMethod());
+        transactionView.setText("");
+
+        TextView simDataDisplay = findViewById(R.id.simWorthView);
+        simDataDisplay.setText("Possible Capital: ??? Possible Worth: ???");
 
         runButton.setOnClickListener(new View.OnClickListener() {
             @Override

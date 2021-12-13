@@ -148,4 +148,24 @@ public class User {
         }
         return 1;
     }
+    public int buyStock(Stock stock, double price){
+        if (price > this.capital){
+            return -1;
+        }
+        else {
+            this.capital -= price;
+            stock.setNumOwned(stock.getNumOwned() + 1);
+        }
+        return 1;
+    }
+    public int sellStock(Stock stock, double price){
+        if (stock.getNumOwned() <= 0){
+            return -1;
+        }
+        else {
+            this.capital += price;
+            stock.setNumOwned(stock.getNumOwned() - 1);
+        }
+        return 1;
+    }
 }
