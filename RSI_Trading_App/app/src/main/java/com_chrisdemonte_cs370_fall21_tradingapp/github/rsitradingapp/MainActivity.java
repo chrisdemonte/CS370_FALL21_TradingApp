@@ -31,6 +31,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.controllers.StockUtils;
@@ -44,7 +45,7 @@ import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.Simu
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.Stock;
 import com_chrisdemonte_cs370_fall21_tradingapp.github.rsitradingapp.models.User;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     public static User USER;
     public ArrayList<Stock> deletedStocks = new ArrayList<Stock>();
@@ -89,8 +90,11 @@ public class MainActivity extends AppCompatActivity {
         Button trackNewStockButton = findViewById(R.id.addNewStockButton);
         Button buyStockButton = findViewById(R.id.buyButton);
         Button sellStockButton = findViewById(R.id.sellButton);
-        Button simulationButton = findViewById(R.id.simButton);
+        Spinner simulationSpinner = findViewById(R.id.simulationSpinner);
 
+        String[] SimArray = {"Simulation","RSI","Mean-Reversion", "Statistical Arbitrage", "Momentum", "Trend Following", "Market Making", "Sentiment"};
+        ArrayAdapter<String> simAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,SimArray);
+        simulationSpinner.setAdapter(simAdapter);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 loadLoginFragment();
@@ -156,14 +160,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        simulationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (USER.getNumStocks() > 0){
-                    loadSimulationFragment();
-                }
-            }
-        });
+
+
+
 
     }
 
@@ -625,4 +624,31 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.loadingView).setVisibility(View.GONE);
         }
     }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (USER.getNumStocks() > 0) {
+            if (position == 1) {
+                loadSimulationFragment();
+            }else if (position == 2) {
+                //loadSimulationFragment();
+            }else if (position == 3) {
+                //loadSimulationFragment();
+            }else if (position == 4) {
+                //loadSimulationFragment();
+            }else if (position == 5) {
+                //loadSimulationFragment();
+            }else if (position == 6) {
+                //loadSimulationFragment();
+            }else if (position == 7) {
+                //loadSimulationFragment();
+            }
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
 }

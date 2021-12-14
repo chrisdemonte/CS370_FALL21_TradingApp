@@ -138,6 +138,13 @@
             app:layout_constraintEnd_toStartOf="@+id/logoutButton"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Spinner
+            android:id="@+id/simulationSpinner"
+            android:layout_width="99dp"
+            android:layout_height="50dp"
+            app:layout_constraintEnd_toStartOf="@+id/addNewStockButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <Button
             android:id="@+id/nextStockButton"
             android:layout_width="wrap_content"
@@ -155,14 +162,6 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/simButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Simulation"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/graphBg"
@@ -195,7 +194,6 @@
             android:layout_height="wrap_content"
             android:text="ADD STOCK"
             app:layout_constraintEnd_toStartOf="@+id/editButton"
-            app:layout_constraintStart_toEndOf="@+id/simButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
