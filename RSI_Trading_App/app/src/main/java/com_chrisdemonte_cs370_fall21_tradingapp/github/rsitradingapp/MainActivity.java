@@ -95,6 +95,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String[] SimArray = {"Simulation","RSI","Mean-Reversion", "Statistical Arbitrage", "Momentum", "Trend Following", "Market Making", "Sentiment"};
         ArrayAdapter<String> simAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,SimArray);
         simulationSpinner.setAdapter(simAdapter);
+        simulationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                if (USER.getNumStocks() > 0) {
+                    if (position == 1) {
+                        loadSimulationFragment();
+                    }else if (position == 2) {
+                        loadSimulationFragment();
+                    }else if (position == 3) {
+                        loadSimulationFragment();
+                    }else if (position == 4) {
+                        loadSimulationFragment();
+                    }else if (position == 5) {
+                        loadSimulationFragment();
+                    }else if (position == 6) {
+                        loadSimulationFragment();
+                    }else if (position == 7) {
+                        loadSimulationFragment();
+                    }
+                }
+
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+                //TextView amount = findViewById(R.id.stockOwnedView);
+               // amount.setText("Amount Owned:");
+            }
+        });
         logoutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 loadLoginFragment();
